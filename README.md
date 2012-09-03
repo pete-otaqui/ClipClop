@@ -3,9 +3,9 @@ ClipClop
 
 A PHP option parser based on getopt()
 
-Example
+Usage Example
 -------
-````
+````php
 $clipclop = new \ClipClop();
 
 $clipclop->addOption(array(
@@ -19,6 +19,7 @@ $clipclop->addOption(array(
 $clipclop->addOption(array(
     'short' => 'v', // shortname
     'long' => 'verbose', // longname
+    'help' => 'More verbose output',
 ));
 
 
@@ -35,4 +36,16 @@ $clipclop->getOptions(); // returns array('environment'=>'test', 'v'=>TRUE);
 $clipclop->setCommandName('foome'); // overrides default of $argv[0]
 
 $clipclop->usage();
+
+/*
+outputs something like:
+
+foome
+
+Required:
+-v, --verbose                  More verbose output
+
+Optional:
+-e=value, --environment=value  Set the environment
+*/
 ````
