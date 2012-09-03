@@ -1,7 +1,7 @@
 ClipClop
 ========
 
-A PHP option parser based on getopt().
+A PHP option parser based on [getopt()](http://php.net/manual/en/function.getopt.php).
 
 ClipClop allows you to easily create command line tools with options.  ClipClop automatically generates nicely formatted usage instructions, and also gives a convenient API for accessing parameters and values.
 
