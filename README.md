@@ -1,11 +1,15 @@
 ClipClop
 ========
 
-A PHP option parser based on getopt()
+A PHP option parser based on getopt().
+
+ClipClop allows you to easily create command line tools with options.  ClipClop automatically generates nicely formatted usage instructions, and also gives a convenient API for accessing parameters and values.
 
 Usage Example
 -------
 ````php
+#!/usr/bin/env php
+<?php
 $clipclop = new ClipClop();
 
 $clipclop->addOption(array(
@@ -22,9 +26,6 @@ $clipclop->addOption(array(
     'help' => 'More verbose output',
 ));
 
-
-$clipclop->run();
-
 $clipclop->getOption('e'); // returns the value set for 'e' or 'environment'
 
 $clipclop->getOption('environment'); // returns the value set for 'environment' or 'e'
@@ -36,7 +37,7 @@ $clipclop->getOptions(); // returns array('environment'=>'test', 'v'=>TRUE);
 $clipclop->setCommandName('foome'); // overrides default of $argv[0]
 $clipclop->setCommandHelp('foome does a foo on me');
 
-$clipclop->usage();
+$clipclop->usage(); // manually print out the usage text
 
 /*
 outputs something like:
