@@ -135,7 +135,6 @@ class ClipClop
      */
     public function getUsage()
     {
-        $out = "";
         $required = array(
             'helps' => array(),
             'names' => array(),
@@ -189,6 +188,18 @@ class ClipClop
         $help_length = $output_length - $name_length;
         $out = $this->getCommandName();
         $out .= "\n";
+        $help = $this->getCommandHelp();
+        if ( $help ) {
+            $out .= "\n";
+            $chunk_length = $name_length+$help_length;
+            $chunks = ceil(strlen($help)/$chunk_length);
+            for ( $i=0; $i<$chunks; $i++ ) {
+                $s = $i*$chunk_length;
+                $help_chunk = substr($help, $s, $chunk_length);
+                $out .= "$help_chunk\n";
+            }
+            
+        }
         $out .= $this->formatDescriptions($required, "Required", $name_length, $help_length);
         $out .= $this->formatDescriptions($optional, "Optional", $name_length, $help_length);
         return $out;
@@ -359,5 +370,15 @@ class ClipClop
             $this->command_name = $argv[0];
         }
         return $this->command_name;
+    }
+
+    private $command_help;
+    public function setCommandHelp($help)
+    {
+        $this->command_help = $help;
+    }
+    public function getCommandHelp()
+    {
+        return $this->command_help;
     }
 }

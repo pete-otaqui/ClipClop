@@ -6,7 +6,7 @@ A PHP option parser based on getopt()
 Usage Example
 -------
 ````php
-$clipclop = new \ClipClop();
+$clipclop = new ClipClop();
 
 $clipclop->addOption(array(
     'short' => 'e', // shortname, i.e. "-e"
@@ -34,6 +34,7 @@ $clipclop->getOption('v'); // returns TRUE if set, NULL otherwise
 $clipclop->getOptions(); // returns array('environment'=>'test', 'v'=>TRUE);
 
 $clipclop->setCommandName('foome'); // overrides default of $argv[0]
+$clipclop->setCommandHelp('foome does a foo on me');
 
 $clipclop->usage();
 
@@ -41,6 +42,8 @@ $clipclop->usage();
 outputs something like:
 
 foome
+
+does a foo on me
 
 Required:
 -v, --verbose                  More verbose output

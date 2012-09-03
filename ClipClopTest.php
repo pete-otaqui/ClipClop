@@ -118,6 +118,33 @@ class ClipClopTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(TRUE, $options['x']);
         $this->assertEquals(TRUE, $options['x-ray']);
     }
+    public function testCommandHelp()
+    {
+        $clip = new ClipClop();
+        $clip->setWidth(80);
+        $clip->addOption(array(
+            'short' => 'e',
+            'long' => 'environment',
+            'value' => TRUE,
+            'help' => 'Set the environment'
+        ));
+        $clip->setCommandHelp('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis nunc ac ante tristique vitae egestas ligula pharetra. Sed bibendum augue non libero venenatis sed euismod velit consequat. Mauris vulputate ornare nisl sit amet vulputate. Aenean facilisis nibh vitae justo rhoncus rutrum. Donec congue interdum dui ut congue. Nam fermentum lacus quis nibh aliquet interdum. Nullam non condimentum est. Nulla condimentum libero sed libero aliquam vel ultrices mauris varius. Mauris eget rutrum nunc. Ut at nunc nibh. Praesent et arcu blandit dui facilisis pharetra. Phasellus a porttitor neque');
+        $usage = $clip->getUsage();
+        $this->assertEquals('/usr/bin/phpunit
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sagittis nunc 
+ac ante tristique vitae egestas ligula pharetra. Sed bibendum augue non libero v
+enenatis sed euismod velit consequat. Mauris vulputate ornare nisl sit amet vulp
+utate. Aenean facilisis nibh vitae justo rhoncus rutrum. Donec congue interdum d
+ui ut congue. Nam fermentum lacus quis nibh aliquet interdum. Nullam non condime
+ntum est. Nulla condimentum libero sed libero aliquam vel ultrices mauris varius
+. Mauris eget rutrum nunc. Ut at nunc nibh. Praesent et arcu blandit dui facilis
+is pharetra. Phasellus a porttitor neque
+
+Optional:
+-e=value, --environment=value  Set the environment
+' , $usage);
+    }
     public function testFormatsSimpleUsage()
     {
         $clip = new ClipClop();
