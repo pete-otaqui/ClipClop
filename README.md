@@ -54,13 +54,13 @@ API
 
 When adding options all keys are optional, but many combinations will (fairly obviously) not be valid, i.e. an option without either a shortname or a longname.  The keys can be set in the argument array:
 
-*short* - The short name of the argument, e.g. "e"
-*long* - The long name of the argument, e.g. "environment"
-*value* - TRUE means a value is required, FALSE means it is optional, NULL means no value
-*help* - The help text to display for this parameter
-*required* - TRUE if this is a required parameter
-*type* - One of "text" (the default), "integer", "number" (for floats), "url" (returns url_parse on the value) or "json" (return json_decode on the value)
-*validate* - Should be set to a regular expression which the value must match
+* *short* - The short name of the argument, e.g. "e"
+* *long* - The long name of the argument, e.g. "environment"
+* *value* - TRUE means a value is required, FALSE means it is optional, NULL means no value
+* *help* - The help text to display for this parameter
+* *required* - TRUE if this is a required parameter
+* *type* - One of "text" (the default), "integer", "number" (for floats), "url" (returns url_parse on the value) or "json" (return json_decode on the value)
+* *validate* - Should be set to a regular expression which the value must match
 
 ### setCommandName($name) / getCommandName()
 
