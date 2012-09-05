@@ -2,6 +2,23 @@
 require_once('PHPUnit/Autoload.php');
 require_once(__DIR__.'/ClipClop.php');
 
+class DummyPrinter implements ClipClop_Printer_Interface
+{
+    public $output = '';
+    public function msg($message) {
+        $this->output .= $message;
+    }
+}
+
+
+class DummyQuitter implements ClipClop_Quitter_Interface
+{
+    public $code;
+    public function quit($code) {
+        $this->code = $code;
+    }
+}
+
 class ClipClopTest extends PHPUnit_Framework_TestCase
 {
     public function testGetRequiredValue()
@@ -51,6 +68,106 @@ class ClipClopTest extends PHPUnit_Framework_TestCase
         $clip->parseGetOpts(array());
         $this->assertEquals(NULL, $clip->getOption('v'));
     }
+    public function testMultipleFlags()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'v'
+        ));
+        $clip->parseGetOpts(array(
+            'v' => array(FALSE, FALSE),
+        ));
+        $this->assertEquals(array(TRUE, TRUE), $clip->getOption('v'));
+    }
+    public function testMultpleValues()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'v',
+            'value' => TRUE,
+        ));
+        $clip->parseGetOpts(array(
+            'v' => array('one', 'two'),
+        ));
+        $this->assertEquals(array('one', 'two'), $clip->getOption('v'));
+    }
+    public function testValueValidation()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'v',
+            'value' => TRUE,
+            'validate' => '|\d|',
+        ));
+
+        $printer = new DummyPrinter();
+        $quitter = new DummyQuitter();
+        $clip->setPrinter($printer);
+        $clip->setQuitter($quitter);
+        $clip->parseGetOpts(array(
+            'v' => 'a',
+        ));
+        $this->assertEquals("/usr/bin/phpunit Error: a does not match |\d|
+
+/usr/bin/phpunit
+
+Optional:
+-v=value  
+", $printer->output);
+    }
+    public function testIntegerType()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'e',
+            'value' => TRUE,
+            'help' => 'Set the environment',
+            'type' => 'integer',
+        ));
+        $clip->parseGetOpts(array('e'=>'1'));
+        $this->assertEquals(1, $clip->getOption('e'));
+    }
+    public function testNumberType()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'e',
+            'value' => TRUE,
+            'help' => 'Set the environment',
+            'type' => 'number',
+        ));
+        $clip->parseGetOpts(array('e'=>'1.1'));
+        $this->assertEquals(1.1, $clip->getOption('e'));
+    }
+    public function testUrlType()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'u',
+            'value' => TRUE,
+            'help' => 'Set the url',
+            'type' => 'url',
+        ));
+        $url = 'https://www.example.com:8080/foo/bar.html';
+        $parsed_url = parse_url($url);
+        $clip->parseGetOpts(array('u'=>$url));
+        $this->assertEquals($parsed_url, $clip->getOption('u'));
+    }
+    public function testJsonType()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'j',
+            'value' => TRUE,
+            'help' => 'Some JSON',
+            'type' => 'json',
+        ));
+        $json = '{"obj":{"k":"v"}, "arr":[0, 1]}';
+        $parsed_json = json_decode($json);
+        $clip->parseGetOpts(array('j'=>$json));
+        $this->assertEquals($parsed_json, $clip->getOption('j'));
+    }
+
     public function testOnlyShortName()
     {
         $clip = new ClipClop();

@@ -12,6 +12,22 @@
  *     'help' => 'Set the environment', // help text
  *     'required' => TRUE, // This 'option' must be set to something
  * ));
+ *
+ * $clipClop->addOption(array(
+ *     'short' => 't',
+ *     'long' => 'telephone',
+ *     'value' => TRUE,
+ *     'validate' => '/\(\d{3}\) \d{4}-\d{4}/', // number should match regular expression
+ *     'help' => 'telephone number in the format "(XXX) XXXX-XXXX'
+ * ));
+ *
+ * $clipClop->addOption(array(
+ *     'short' => 'n',
+ *     'long' => 'number-of-entries',
+ *     'value' => TRUE,
+ *     'type' => 'integer', // or 'float', 'json', 'url', ''
+ *     'help' => 'telephone number in the format "(XXX) XXXX-XXXX'
+ * ));
  * 
  * $clipclop->addOption(array(
  *     'short' => 'v', // shortname
@@ -104,29 +120,72 @@ class ClipClop
         }
         // loop over all the option we *might* have got
         foreach ( $this->options as $option ) {
-            // we prefer long options
-            // did we get a long option?
             $found = FALSE;
-            if ( array_key_exists('long', $option) ) {
-                $lname = $option['long'];
-                if ( array_key_exists($lname, $gotopts) ) {
-                    $found = TRUE;
-                    $this->parsed_options[$lname] = $gotopts[$lname];
+            try {
+                // we prefer long options
+                // did we get a long option?
+                if ( array_key_exists('long', $option) ) {
+                    $lname = $option['long'];
+                    if ( array_key_exists($lname, $gotopts) ) {
+                        $found = TRUE;
+                        $this->parsed_options[$lname] = $this->convertGotOptToValue($option, $gotopts[$lname]);
+                    }
+                // or did we get a short option for this?
                 }
-            // or did we get a short option for this?
-            }
-            if ( !$found && array_key_exists('short', $option) ) {
-                $sname = $option['short'];
-                if ( array_key_exists($sname, $gotopts) ) {
-                    $found = TRUE;
-                    $this->parsed_options[$sname] = $gotopts[$sname];
+                if ( !$found && array_key_exists('short', $option) ) {
+                    $sname = $option['short'];
+                    if ( array_key_exists($sname, $gotopts) ) {
+                        $found = TRUE;
+                        $this->parsed_options[$sname] = $this->convertGotOptToValue($option, $gotopts[$sname]);
+                    }
+                // was it required?
                 }
-            // was it required?
+            } catch (ClipClop_Invalid_Value_Exception $e) {
+                $error_message = $e->getMessage();
+                $this->usage(1, $error_message);
             }
             if ( !$found && array_key_exists('required', $option) ) {
-                $this->usage(1);
+
+                $this->usage(1, "You are missing a required option");
             }
         }
+    }
+
+    private function convertGotOptToValue($option, $value)
+    {
+        if ( is_array($value) ) {
+            $return = array();
+            foreach ( $value as $val ) {
+                $return[] = $this->convertGotOptToValue($option, $val);
+            }
+            return $return;
+        }
+        if ( $value === FALSE ) {
+            $value = TRUE;
+        }
+        if ( !array_key_exists('type', $option) ) {
+            $option['type'] = 'string';
+        }
+        switch ($option['type']) {
+            case 'integer':
+                $value = (int) $value;
+                break;
+            case 'number':
+                $value = (float) $value;
+                break;
+            case 'json':
+                $value = json_decode($value);
+                break;
+            case 'url':
+                $value = parse_url($value);
+                break;
+        }
+        if ( array_key_exists('validate', $option) ) {
+            if ( preg_match($option['validate'], $value) === 0 ) {
+                throw new ClipClop_Invalid_Value_Exception("$value does not match {$option['validate']}");
+            }
+        }
+        return $value;
     }
 
     /**
@@ -208,11 +267,14 @@ class ClipClop
      * Print out the usage, optionally exiting with a given code
      * @param  integer $code The exit code (0 for OK, 1 for error, etc)
      */
-    public function usage($code) {
+    public function usage($code, $message = NULL) {
+        if ( $message !== NULL ) {
+            $this->getPrinter()->msg($this->getCommandName()." Error: $message\n\n");
+        }
         $out = $this->getUsage();
-        print $out;
+        $this->getPrinter()->msg($out);
         if ( $code !== NULL ) {
-            exit($code);
+            $this->getQuitter()->quit($code);
         }
     }
 
@@ -380,5 +442,56 @@ class ClipClop
     public function getCommandHelp()
     {
         return $this->command_help;
+    }
+
+
+    private $printer;
+    public function getPrinter()
+    {
+        if ( !$this->printer ) {
+            $this->printer = new ClipClop_Printer();
+        }
+        return $this->printer;
+    }
+    public function setPrinter(ClipClop_Printer_Interface $printer)
+    {
+        $this->printer = $printer;
+    }
+
+    private $quitter;
+    public function getQuitter()
+    {
+        if ( !$this->quitter ) {
+            $this->quitter = new ClipClop_Quitter();
+        }
+        return $this->quitter;
+    }
+    public function setQuitter(ClipClop_Quitter_Interface $quitter)
+    {
+        $this->quitter = $quitter;
+    }
+}
+
+class ClipClop_Invalid_Value_Exception extends Exception {}
+
+interface ClipClop_Printer_Interface
+{
+    public function msg($message);
+}
+class ClipClop_Printer implements ClipClop_Printer_Interface
+{
+    public function msg($message) {
+        print $message;
+    }
+}
+
+interface ClipClop_Quitter_Interface
+{
+    public function quit($code);
+}
+class ClipClop_Quitter implements ClipClop_Quitter_Interface
+{
+    public function quit($code) {
+        exit($code);
     }
 }
