@@ -7,7 +7,7 @@ ClipClop allows you to easily create command line tools with options.  ClipClop 
 
 ClipClop handles required and optional parameters, and values for them.  So a given option such as "--verbose" can be required or optional in itself, and it can have no parameter value or an optional one, or a required one.
 
-ClipClop manages multiple values, can enforce single values, can validate against regular expressions and can parse out certain types for you: integers, numbers, json and urls.
+ClipClop manages multiple values, although enforces single values by default, can validate against regular expressions and can parse out certain types for you: integers, numbers, json and urls.
 
 Quick Example
 -------------
@@ -61,6 +61,7 @@ When adding options all keys are optional, but many combinations will (fairly ob
 * *required* - TRUE if this is a required parameter
 * *type* - One of "text" (the default), "integer", "number" (for floats), "url" (returns url_parse on the value) or "json" (return json_decode on the value)
 * *validate* - Should be set to a regular expression which the value must match
+* *multiple* - provide a "truthy" value to support multiple values (even single values will return an array to getOption)
 
 ### setCommandName($name) / getCommandName()
 

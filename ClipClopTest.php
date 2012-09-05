@@ -68,11 +68,24 @@ class ClipClopTest extends PHPUnit_Framework_TestCase
         $clip->parseGetOpts(array());
         $this->assertEquals(NULL, $clip->getOption('v'));
     }
+    public function testLastSingularValue()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'v',
+            'value' => TRUE,
+        ));
+        $clip->parseGetOpts(array(
+            'v' => array('one', 'two'),
+        ));
+        $this->assertEquals('two', $clip->getOption('v'));
+    }
     public function testMultipleFlags()
     {
         $clip = new ClipClop();
         $clip->addOption(array(
-            'short' => 'v'
+            'short' => 'v',
+            'multiple' => TRUE,
         ));
         $clip->parseGetOpts(array(
             'v' => array(FALSE, FALSE),
@@ -85,11 +98,25 @@ class ClipClopTest extends PHPUnit_Framework_TestCase
         $clip->addOption(array(
             'short' => 'v',
             'value' => TRUE,
+            'multiple' => TRUE,
         ));
         $clip->parseGetOpts(array(
             'v' => array('one', 'two'),
         ));
         $this->assertEquals(array('one', 'two'), $clip->getOption('v'));
+    }
+    public function testMultipleValuesAlwaysReturnArrays()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'v',
+            'value' => TRUE,
+            'multiple' => TRUE,
+        ));
+        $clip->parseGetOpts(array(
+            'v' => 'one',
+        ));
+        $this->assertEquals(array('one'), $clip->getOption('v'));
     }
     public function testValueValidation()
     {

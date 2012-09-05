@@ -153,13 +153,25 @@ class ClipClop
 
     private function convertGotOptToValue($option, $value)
     {
-        if ( is_array($value) ) {
+        if ( array_key_exists('multiple', $option) && $option['multiple'] ) {
             $return = array();
-            foreach ( $value as $val ) {
-                $return[] = $this->convertGotOptToValue($option, $val);
+            if ( !is_array($value) ) {
+                $value = array($value);
             }
-            return $return;
+            foreach ($value as $val) {
+                $return[] = $this->convertSingleGotOptToValue($option, $val);
+            }
+        } else {
+            if ( is_array($value) ) {
+                $value = array_pop($value);
+            }
+            $return = $this->convertSingleGotOptToValue($option, $value);
         }
+        return $return;
+    }
+
+    private function convertSingleGotOptToValue($option, $value)
+    {
         if ( $value === FALSE ) {
             $value = TRUE;
         }
