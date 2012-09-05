@@ -62,6 +62,7 @@ When adding options all keys are optional, but many combinations will (fairly ob
 * *type* - One of "text" (the default), "integer", "number" (for floats), "url" (returns url_parse on the value) or "json" (return json_decode on the value)
 * *validate* - Should be set to a regular expression which the value must match
 * *multiple* - provide a "truthy" value to support multiple values (even single values will return an array to getOption)
+* *default* - allows for a default value to be set for when the parameter is not provided.
 
 ### setCommandName($name) / getCommandName()
 

@@ -118,6 +118,17 @@ class ClipClopTest extends PHPUnit_Framework_TestCase
         ));
         $this->assertEquals(array('one'), $clip->getOption('v'));
     }
+    public function testDefaultValue()
+    {
+        $clip = new ClipClop();
+        $clip->addOption(array(
+            'short' => 'v',
+            'value' => TRUE,
+            'default' => 'foo',
+        ));
+        $clip->parseGetOpts(array());
+        $this->assertEquals('foo', $clip->getOption('v'));
+    }
     public function testValueValidation()
     {
         $clip = new ClipClop();

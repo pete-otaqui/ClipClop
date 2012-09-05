@@ -144,6 +144,15 @@ class ClipClop
                 $error_message = $e->getMessage();
                 $this->usage(1, $error_message);
             }
+            if ( !$found && array_key_exists('default', $option) ) {
+                $found = TRUE;
+                if ( array_key_exists('long', $option) ) {
+                    $this->parsed_options[$option['long']] = $option['default'];
+                }
+                if ( array_key_exists('short', $option) ) {
+                    $this->parsed_options[$option['short']] = $option['default'];
+                }
+            }
             if ( !$found && array_key_exists('required', $option) ) {
 
                 $this->usage(1, "You are missing a required option");
