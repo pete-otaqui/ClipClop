@@ -39,7 +39,7 @@ print "You ran this script with environment: $environment";
 ````
 Make the script executable:
 ````bash
-$ chmod +x env
+$ chmod +x environment_test
 ````
 Now you can run this from the command line as follows:
 ````bash
