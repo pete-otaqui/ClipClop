@@ -1,0 +1,26 @@
+{
+	"name": "pete-otaqui/ClipClop",
+	"type": "library",
+	"description": "A PHP option parser based on getopt()",
+	"keywords": ["ClipClop", "option parser"],
+	"homepage": "https://github.com/pete-otaqui/ClipClop",
+	"support": {
+		"issues": "https://github.com/pete-otaqui/ClipClop/issues",
+		"source": "https://github.com/pete-otaqui/ClipClop"
+	},
+	"authors": [{
+		"name": "Pete Otaqui",
+		"email": "pete@otaqui.com",
+		"homepage": "http://otaqui.com",
+		"role": "Developer"
+	}],
+	"license": [
+		"MIT"
+	],
+	"require": {
+		"php": ">=5.2.0"
+	},
+	"autoload": {
+		"classmap": ["ClipClop.php"]
+	}
+}
