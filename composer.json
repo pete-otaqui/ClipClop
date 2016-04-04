@@ -1,5 +1,5 @@
 {
-	"name": "pete-otaqui/ClipClop",
+	"name": "pete-otaqui/clip-clop",
 	"type": "library",
 	"description": "A PHP option parser based on getopt()",
 	"keywords": ["ClipClop", "option parser"],
